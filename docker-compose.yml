@@ -1,0 +1,83 @@
+# @template: nginx-php71
+# @title: Nginx 1.12, PHP 7.1, MariaDB 10.1
+# @version: 1.1.0
+#
+# @project: dsrt
+# @domain: dsrt.local
+# @docroot: html
+
+version: "2"
+
+services:
+  dsrt-nginx:
+    build: "./docker/nginx/"
+    container_name: "dsrt-nginx"
+    volumes:
+      - ./symfony:/var/www/html
+      - /etc/ssl/nginx/
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - dsrt-network
+
+  dsrt-mysql:
+    build: "./docker/mysql/"
+    container_name: "dsrt-mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "dsrt"
+      MYSQL_PASSWORD: "dsrt"
+      MYSQL_USER: "dsrt"
+    volumes:
+      - /var/lib/mysql
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    networks:
+      - dsrt-network
+
+  dsrt-php:
+    build: "./docker/php/"
+    container_name: "dsrt-php"
+    volumes:
+      - ./symfony:/var/www/html
+    restart: unless-stopped
+    ports:
+      - 9000
+    networks:
+      - dsrt-network
+
+  dsrt-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: "dsrt-phpmyadmin"
+    links:
+      - dsrt-mysql:mysql
+    depends_on:
+      - dsrt-mysql
+    ports:
+      - 2080:80
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      PMA_HOST: dsrt-mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    networks:
+      - dsrt-network
+
+  dsrt-mail:
+    image: mailhog/mailhog
+    container_name: "dsrt-mail"
+    user: root
+    ports:
+      - 1080:80
+    environment:
+      MH_API_BIND_ADDR: 0.0.0.0:80
+      MH_UI_BIND_ADDR: 0.0.0.0:80
+    networks:
+      - dsrt-network
+
+networks:
+  dsrt-network:
+    driver: bridge
