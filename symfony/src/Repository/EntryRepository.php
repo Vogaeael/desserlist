@@ -12,4 +12,9 @@ class EntryRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Entry::class);
     }
+
+    public function findAllByUser($userId)
+    {
+
+    }
 }
