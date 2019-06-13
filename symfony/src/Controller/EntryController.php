@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Entry;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 
 class EntryController extends AbstractController
 {
