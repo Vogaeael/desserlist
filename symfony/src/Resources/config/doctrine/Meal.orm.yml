@@ -1,7 +1,7 @@
-App\Entity\User:
+App\Entity\Meal:
   type: entity
-  repositoryClass: App\Repository\UserRepository
-  table: dsrt.user
+  repositoryClass: App\Repository\MealRepository
+  table: dsrt.meal
   indexes:
     name_index:
       columns: [ id ]
@@ -14,13 +14,11 @@ App\Entity\User:
     name:
       type: string
       length: 256
-    email:
+    link:
       type: string
-      length: 180
-      unique: true
-    roles:
-      type: json
-    password:
+      length: 1024
+      nullable: true
+    description:
       type: string
-      length: 256
+      length: 1024
       nullable: true
