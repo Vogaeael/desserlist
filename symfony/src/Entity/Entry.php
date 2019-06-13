@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use DateTime;
+
 class Entry
 {
     private $id;
-    private $idUser;
-    private $idWorkday;
+    private $user;
+    private $workday;
     private $note;
 
     /**
@@ -28,33 +30,33 @@ class Entry
     /**
      * @return mixed
      */
-    public function getIdUser()
+    public function getUser()
     {
-        return $this->idUser;
+        return $this->user;
     }
 
     /**
-     * @param mixed $idUser
+     * @param mixed $user
      */
-    public function setIdUser($idUser): void
+    public function setUser($user): void
     {
-        $this->idUser = $idUser;
+        $this->user = $user;
     }
 
     /**
      * @return mixed
      */
-    public function getIdWorkday()
+    public function getWorkday()
     {
-        return $this->idWorkday;
+        return $this->workday;
     }
 
     /**
-     * @param mixed $idWorkday
+     * @param mixed $workday
      */
-    public function setIdWorkday($idWorkday): void
+    public function setWorkday($workday): void
     {
-        $this->idWorkday = $idWorkday;
+        $this->workday = $workday;
     }
 
     /**

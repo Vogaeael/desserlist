@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Your Entries{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">
+        <h1>Entries</h1>
+        {% if entries|length > 0 %}
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Meal</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.workday }}</td>
+                    <td>{{ entry.workday.meal }}</td>
+                    <td>{{ entry.note }}</td>
+                    <td>
+                        <ul>
+                            <li><a href="/entry/{{ entry.id }}">View</a></li>
+                            <li><a href="/entry/delete/{{ entry.id }}">Delete</a></li>
+                            <li><a href="/entry/edit/{{ entry.id }}">Edit</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        <span><a href="/create/entry/">Create an Entry</a></span>
+    </div>
+{% endblock %}

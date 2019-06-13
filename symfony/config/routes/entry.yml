@@ -13,3 +13,7 @@ entry_show_all:
 entry_on_date:
   path: /entries/{date}
   controller: App\Controller\EntryController::showEntriesOnDate
+
+entry_create:
+  path: /create/entry
+  controller: App\Controller\EntryController::createEntry

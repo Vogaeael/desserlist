@@ -18,6 +18,7 @@
         <li><a href="/">Home</a></li>
         <li><a href="/users">Users</a></li>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <li><a href="/entries">Your Entries</a></li>
             <li><a href="/logout">Logout</a></li>
         {% else %}
             <li><a href="/login">Login</a></li>

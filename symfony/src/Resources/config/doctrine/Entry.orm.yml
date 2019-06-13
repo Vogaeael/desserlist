@@ -14,4 +14,16 @@ App\Entity\Entry:
     note:
       type: string
       length: 1024
-  # @TODO create add UserId and DateId
+      nullable: true
+  manyToOne:
+    user:
+      targetEntity: User
+      joinColumn:
+        name: userId
+        referencedColumnName: id
+    workday:
+      targetEntity: Workday
+      joinColumn:
+        name: workdayId
+        referencedColumnName: id
+

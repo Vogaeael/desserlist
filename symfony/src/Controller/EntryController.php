@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Entry;
-use App\Entity\User;
+use App\Form\EntryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 class EntryController extends AbstractController
 {
@@ -41,7 +42,10 @@ class EntryController extends AbstractController
 
         $entries = $this->getDoctrine()
             ->getRepository(Entry::class)
-            ->findBy(['userId' => $userId]);
+            ->findBy(['user' => $userId]);
+
+        //        var_dump($entries);
+        //        die;
 
         return $this->render(
             'entry/viewAllByUser.html.twig',
@@ -57,6 +61,40 @@ class EntryController extends AbstractController
         $entries = $this->getDoctrine()
             ->getRepository(Entry::class)
             ->findAll();
+    }
+
+    public function createEntry(Request $request)
+    {
+        $entry = new Entry();
+
+        $user = $this->getUser();
+        $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
+        $form = $this->createForm(
+            EntryType::class,
+            $entry,
+            [
+                'userId'      => $user->getId(),
+                'workdayRepo' => $workdayRepo,
+            ]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entry->setUser($user);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($entry);
+            $entityManager->flush();
+
+            return $this->redirect('/entries');
+        }
+
+        return $this->render(
+            'entry/createEntry.html.twig',
+            [
+                'entryForm' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -77,13 +115,5 @@ class EntryController extends AbstractController
         }
 
         return $entry;
-    }
-
-    /**
-     * @return null|User
-     */
-    private function getCurrentUser(){
-        var_dump($this->get('security.context'));
-        return $this->get('security.context')->getToken()->getUser();
     }
 }
