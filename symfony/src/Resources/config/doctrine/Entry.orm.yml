@@ -26,4 +26,3 @@ App\Entity\Entry:
       joinColumn:
         name: workdayId
         referencedColumnName: id
-

@@ -1,0 +1,25 @@
+App\Entity\Workday:
+  type: entity
+  repositoryClass: App\Repository\WorkdayRepository
+  table: dsrt.workday
+  indexes:
+    name_index:
+      columns: [ id ]
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: AUTO
+  fields:
+    date:
+      type: date
+#  manyToOne:
+#    meal:
+#      targetEntity: Meal
+#      joinColumn:
+#        name: mealId
+#        referencedColumnName: id
+  oneToMany:
+    entries:
+      targetEntity: Entry
+      mappedBy: workdayId

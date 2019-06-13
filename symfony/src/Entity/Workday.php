@@ -7,6 +7,7 @@ class Workday
     private $id;
     private $date;
     private $meal;
+    private $entries = [];
 
     /**
      * @return mixed
@@ -54,5 +55,21 @@ class Workday
     public function setMeal($meal): void
     {
         $this->meal = $meal;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntries(): array
+    {
+        return $this->entries;
+    }
+
+    /**
+     * @param array $entries
+     */
+    public function setEntries(array $entries): void
+    {
+        $this->entries = $entries;
     }
 }
