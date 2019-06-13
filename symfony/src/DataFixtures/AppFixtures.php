@@ -2,13 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Bot;
-use App\Entity\Category;
-use App\Entity\Personality;
-use App\Entity\PersonalityType;
-use App\Entity\Phrase;
-use App\Entity\PhraseType;
+use App\Entity\Entry;
+use App\Entity\Meal;
 use App\Entity\User;
+use App\Entity\Workday;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -16,36 +16,19 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AppFixtures extends Fixture
 {
     private $passwordEncoder;
-    private $categories = [
-        'Default',
-        'Random',
-        'Family & Friendship',
-        'Movie',
-        'Music',
-        'Sports',
-        'Food',
-        'Travel & Nature',
-        'Technology',
-        'Fashion',
-        'Hobbies',
-        'Weird',
-    ];
-    private $phraseTypes = [
-        'Default',
-        'Question',
-        'Answer',
-        'Statement',
-        'Opinion',
-        'Insult',
-
-    ];
-    private $personalityTypes = [
-        'Default',
-        'Formal',
-        'Informal',
-        'Flowery',
-        'Mean',
-        'Crazy',
+    private $meals = [
+        'Burgerlasagne'                                     => 'http://www.langwacken.de/grillkulturverein/burger-lasagne/',
+        'Pachamanca'                                        => 'https://blog.viventura.de/pachamanca/',
+        'Salat-Smoothie mit Gojibeeren'                     => 'https://www.chefkoch.de/rezepte/2693631422113972/Salat-Smoothie-mit-Gojibeeren.html',
+        'Drachenhackfleisch à la Dora'                      => 'https://www.chefkoch.de/rezepte/1228271227962981/Drachenhackfleisch-la-Dora.html',
+        'Drachenfleisch-Salat mit Öldressing und Plumbo'    => 'http://aiondatabase.net/de/item/152231189/',
+        'Philadelphia - Ananas - Torte'                     => 'https://www.chefkoch.de/rezepte/846031190029891/Philadelphia-Ananas-Torte.html',
+        'Brokkoli-Creme'                                    => 'https://www.chefkoch.de/rezepte/2384121377787635/Brokkoli-Creme.html',
+        'Möhren-Gratin'                                     => 'https://www.chefkoch.de/rezepte/2001321323969084/Moehren-Gratin.html',
+        'Currysoße für Currywurst'                          => 'https://www.chefkoch.de/rezepte/2059121333101564/Currysosse-fuer-Currywurst.html',
+        'Griechische Zitronensuppe mit Hack - Reisbällchen' => 'https://www.chefkoch.de/rezepte/1242261229011350/Griechische-Zitronensuppe-mit-Hack-Reisbaellchen.html',
+        'Lockere Erdbeertorte'                              => 'https://www.chefkoch.de/rezepte/2794561431614383/Lockere-Erdbeertorte.html',
+        'Asiatische Gemüsesuppe - pikant'                   => 'https://www.chefkoch.de/rezepte/1092421215259171/Asiatische-Gemuesesuppe-pikant.html',
     ];
 
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
@@ -56,165 +39,149 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $this->createUserFixtures($manager);
-        $this->createCategoryFixtures($manager);
-        $this->createPhraseTypeFixtures($manager);
-        $this->createPersonalityTypeFixtures($manager);
-        $this->createPersonalityFixtures($manager);
-        $this->createBotFixtures($manager);
-        $this->createPhraseFixtures($manager);
-        $this->createPhraseToAlternativeFixtures($manager);
-        $this->createPhraseToReplyFixtures($manager);
+        $this->createMealFixtures($manager);
+        $this->createWorkdayFixtures($manager);
+        $this->createEntryFixtures($manager);
     }
 
     private function createUserFixtures(ObjectManager $manager)
     {
+        $users = [];
         /**
          * create test users
+         * if you go beyond 26 you should expand the range of letters
          */
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 9; $i++) {
             $user = new User();
-            $user->setEmail('user_' . $i . '@test.de');
+            $letters = range('a', 'z');
+            $name = 'dude-' . $letters[$i];
+            $user->setEmail($name . '@test.com');
             $user->setPassword(
                 $this->passwordEncoder->encodePassword(
                     $user,
-                    'changeme123'
+                    'auto123'
                 )
             );
-            $user->setName('user ' . $i);
+            $user->setName($name);
             $manager->persist($user);
+            $users[] = $user;
         }
+
+        $this->addReference('users', (object)$users);
 
         $manager->flush();
     }
 
-    private function createCategoryFixtures(ObjectManager $manager)
+    private function createMealFixtures(ObjectManager $manager)
     {
+        $meals = [];
         /**
-         * create test categories
+         * create test meals
          */
-        foreach ($this->categories as $categoryName) {
-            $category = new Category();
-            $category->setName($categoryName);
+        foreach ($this->meals as $mealName => $mealLink) {
+            $meal = new Meal();
+            $meal->setName($mealName);
+            $meal->setLink($mealLink);
+            if ($this->getRandomBool()) {
+                $meal->setDescription($this->getRandomString(100));
+            }
 
-            $manager->persist($category);
-            //$this->addReference($categoryName, $category);
+            $manager->persist($meal);
+            $meals[] = $meal;
         }
 
+        $this->addReference('meals', (object)$meals);
         $manager->flush();
     }
 
-    private function createPhraseTypeFixtures(ObjectManager $manager)
+    private function createWorkdayFixtures(ObjectManager $manager)
     {
+        $workdays = [];
+        $meals = (array)$this->getReference('meals');
         /**
          * create test phraseTypes
          */
-        foreach ($this->phraseTypes as $type) {
-            $phraseType = new PhraseType();
-            $phraseType->setName($type);
+        $period = new DatePeriod(
+            new DateTime('2020-03-01'),
+            new DateInterval('P1D'),
+            new DateTime('2020-03-31')
+        );
 
-            $manager->persist($phraseType);
-            //$this->addReference($type, $phraseType);
+        /** @var DateTime $date */
+        foreach ($period as $date) {
+            $workday = new Workday();
+            $workday->setDate($date->format('Y-m-d'));
+            $workday->setMeal($this->getRandomFromArray($meals));
 
+            $manager->persist($workday);
+            $workdays[] = $workday;
         }
 
+        $this->addReference('workdays', (object)$workdays);
         $manager->flush();
     }
 
-    private function createPersonalityTypeFixtures(ObjectManager $manager)
+    private function createEntryFixtures(ObjectManager $manager)
     {
+        $users = (array)$this->getReference('users');
+        $workdays = (array)$this->getReference('workdays');
         /**
          * create test personalityTypes
          */
-        foreach ($this->personalityTypes as $type) {
-            $personalityType = new PersonalityType();
-            $personalityType->setName($type);
+        foreach ($users as $user) {
+            for ($i = 0; $i < rand(15, 27); ++$i) {
+                $entry = new Entry();
+                $entry->setUser($user);
+                if ($this->getRandomBool()) {
+                    $entry->setNote($this->getRandomString(rand(5, 10)));
+                }
+                $entry->setWorkday($this->getRandomFromArray($workdays));
 
-            $manager->persist($personalityType);
-            $this->addReference($type, $personalityType);
+                $manager->persist($entry);
+            }
         }
 
         $manager->flush();
     }
 
-    private function createPersonalityFixtures(ObjectManager $manager)
+    /**
+     * Get an random string of the length
+     *
+     * @param int $length
+     *
+     * @return string
+     */
+    private function getRandomString(int $length = 10): string
     {
-        /**
-         * create test personalities
-         */
-        for ($i = 0; $i < 3; $i++) {
-            $personality = new Personality();
-
-            // copy of type array
-            $types = $this->personalityTypes;
-
-            // get 2 different types
-            $keyOne = array_rand($types);
-            $typeOne = $types[$keyOne];
-            unset($types[$keyOne]);
-            $keyTwo = array_rand($types);
-            $typeTwo = $types[$keyTwo];
-
-            /** @var PersonalityType $refOne */
-            $refOne = $this->getReference($typeOne);
-            /** @var PersonalityType $refTwo */
-            $refTwo = $this->getReference($typeTwo);
-
-            $personality->setName($typeOne . '-' . $typeTwo);
-            $personality->setPersonalityTypeOne($refOne);
-            $personality->setPersonalityTypeTwo($refTwo);
-
-            $manager->persist($personality);
-            $this->addReference('personality' . $i, $personality);
+        $characters = ' .,0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
 
-        $manager->flush();
+        return $randomString;
     }
 
-    private function createBotFixtures(ObjectManager $manager)
+    /**
+     * Get random an value of the array
+     *
+     * @param array $array
+     *
+     * @return mixed
+     */
+    private function getRandomFromArray(array $array)
     {
-        for ($i = 0; $i < 2; $i++) {
-            $bot = new Bot();
-
-            $bot->setName('bot' . $i);
-            $bot->setEnabled(true);
-
-            date_default_timezone_set('Europe/Berlin');
-            $bot->setCreatedAt(new \DateTime());
-
-            /** @var Personality $personality */
-            $personality = $this->getReference('personality' . $i);
-            $bot->setPersonality($personality);
-
-            $manager->persist($bot);
-            //$this->addReference('bot'.$i, $bot);
-        }
-
-        $manager->flush();
-    }
-    //
-    //    private function createPhraseFixtures(ObjectManager $manager)
-    //    {
-    //        foreach ($this->personalityTypes as $personalityTypeName) {
-    //            foreach ($this->categories as $categoryName) {
-    //                foreach ($this->phraseTypes as $phraseTypeName) {
-    //                    for($i = 0; $i < 10; $i++) {
-    //                        $phrase = new Phrase()
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //
-    //        $manager->flush();
-    //    }
-
-    private function createPhraseToAlternativeFixtures(ObjectManager $manager)
-    {
-        $manager->flush();
+        return $array[rand(0, count($array) - 1)];
     }
 
-    private function createPhraseToReplyFixtures(ObjectManager $manager)
+    /**
+     * Get random true or false
+     *
+     * @return bool
+     */
+    private function getRandomBool()
     {
-        $manager->flush();
+        return (boolean)rand(0, 1);
     }
 }
