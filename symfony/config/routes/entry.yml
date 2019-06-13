@@ -1,0 +1,15 @@
+entry:
+  path: /entry
+  controller: App\Controller\EntryController::index
+
+entry_show:
+  path: /entry/{id}
+  controller: App\Controller\EntryController::showEntry
+
+entry_show_all:
+  path: entries
+  controller: App\Controller\EntryController::showAllEntry
+
+entry_on_date:
+  path: /entries/{date}
+  controller: App\Controller\EntryController::showEntriesOnDate

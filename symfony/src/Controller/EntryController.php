@@ -9,9 +9,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EntryController extends AbstractController
 {
-    /**
-     * @Route("/entry", name="entry")
-     */
     public function index()
     {
         return $this->render(
@@ -22,9 +19,6 @@ class EntryController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/entry/{id}", name="show_entry")
-     */
     public function showEntry($id)
     {
         $entry = $this->getEntryById($id);
@@ -35,9 +29,6 @@ class EntryController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/entries", name="entrie_show_all")
-     */
     public function showAllEntry()
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -61,10 +52,7 @@ class EntryController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/entries/{date}", name="entrie_on_date")
-     */
-    public function showEntriesOnDate()
+    public function showEntriesOnDate($date)
     {
         // @TODO überarbeiten
         $entries = $this->getDoctrine()

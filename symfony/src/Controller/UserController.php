@@ -10,9 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    /**
-     * @Route("/user", name="user")
-     */
     public function index()
     {
         return $this->render(
@@ -23,9 +20,6 @@ class UserController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/user/{id}", name="user_show")
-     */
     public function showUser($id)
     {
         $user = $this->getUserById($id);
@@ -38,9 +32,6 @@ class UserController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/users", name="user_show_all")
-     */
     public function showAllUser()
     {
         $users = $this->getDoctrine()
@@ -55,9 +46,6 @@ class UserController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/user/delete/{id}", name="user_delete")
-     */
     public function deleteUser($id)
     {
         $user = $this->getUserById($id);
@@ -69,9 +57,6 @@ class UserController extends AbstractController
         return $this->redirectToRoute('user_show_all');
     }
 
-    /**
-     * @Route("/user/edit/{id}", name="user_edit")
-     */
     public function editUser($id, Request $request)
     {
         $user = $this->getUserById($id);
@@ -79,9 +64,6 @@ class UserController extends AbstractController
         return $this->handleForm($user, $request);
     }
 
-    //    /**
-    //     * @Route("/users/new/", name="user_create")
-    //     */
     //    public function newUser(Request $request) {
     //        $user = new User();
     //

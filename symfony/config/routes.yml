@@ -1,0 +1,3 @@
+app_directory:
+  resource: 'routes/'
+  type: directory
