@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntryType extends AbstractType
 {
@@ -22,6 +23,13 @@ class EntryType extends AbstractType
             ->add('workday', ChoiceType::class, ['choices' => $possibleWorkDays])
             ->add('note', TextType::class, ['required' => false])
             ->add('save', SubmitType::class);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver);
+        $resolver->setRequired('userId');
+        $resolver->setRequired('workdayRepo');
     }
 
     /**

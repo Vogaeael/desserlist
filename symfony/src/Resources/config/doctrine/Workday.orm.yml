@@ -13,12 +13,12 @@ App\Entity\Workday:
   fields:
     date:
       type: date
-#  manyToOne:
-#    meal:
-#      targetEntity: Meal
-#      joinColumn:
-#        name: mealId
-#        referencedColumnName: id
+  manyToOne:
+    meal:
+      targetEntity: Meal
+      joinColumn:
+        name: mealId
+        referencedColumnName: id
   oneToMany:
     entries:
       targetEntity: Entry

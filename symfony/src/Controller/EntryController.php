@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Entry;
+use App\Entity\Workday;
 use App\Form\EntryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
