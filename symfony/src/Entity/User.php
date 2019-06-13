@@ -11,6 +11,7 @@ class User implements UserInterface
     private $roles = [];
     private $password;
     private $name;
+    private $entries = [];
 
     public function getId(): ?int
     {
@@ -100,5 +101,21 @@ class User implements UserInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntries(): array
+    {
+        return $this->entries;
+    }
+
+    /**
+     * @param array $entries
+     */
+    public function setEntries(array $entries): void
+    {
+        $this->entries = $entries;
     }
 }

@@ -24,3 +24,8 @@ App\Entity\User:
       type: string
       length: 256
       nullable: true
+  oneToMany:
+    entries:
+      targetEntity: Entry
+      mappedBy: userId
+      oneDelete: CASCADE
