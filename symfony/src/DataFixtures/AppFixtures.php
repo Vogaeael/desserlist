@@ -29,6 +29,8 @@ class AppFixtures extends Fixture
         'Griechische Zitronensuppe mit Hack - Reisbällchen' => 'https://www.chefkoch.de/rezepte/1242261229011350/Griechische-Zitronensuppe-mit-Hack-Reisbaellchen.html',
         'Lockere Erdbeertorte'                              => 'https://www.chefkoch.de/rezepte/2794561431614383/Lockere-Erdbeertorte.html',
         'Asiatische Gemüsesuppe - pikant'                   => 'https://www.chefkoch.de/rezepte/1092421215259171/Asiatische-Gemuesesuppe-pikant.html',
+        'Gekochte Elfenaugen' => null,
+        'Verbrantes Handy' => null,
     ];
 
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
@@ -38,6 +40,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
+        shuffle($this->meals);
         $this->createUserFixtures($manager);
         $this->createMealFixtures($manager);
         $this->createWorkdayFixtures($manager);
@@ -46,12 +49,12 @@ class AppFixtures extends Fixture
 
     private function createUserFixtures(ObjectManager $manager)
     {
-        $users = [];
+        $numberUser = 9;
         /**
          * create test users
          * if you go beyond 26 you should expand the range of letters
          */
-        for ($i = 0; $i < 9; $i++) {
+        for ($i = 0; $i < $numberUser; ++$i) {
             $user = new User();
             $letters = range('a', 'z');
             $name = 'dude-' . $letters[$i];
@@ -64,17 +67,13 @@ class AppFixtures extends Fixture
             );
             $user->setName($name);
             $manager->persist($user);
-            $users[] = $user;
         }
-
-        $this->addReference('users', (object)$users);
 
         $manager->flush();
     }
 
     private function createMealFixtures(ObjectManager $manager)
     {
-        $meals = [];
         /**
          * create test meals
          */
@@ -87,17 +86,14 @@ class AppFixtures extends Fixture
             }
 
             $manager->persist($meal);
-            $meals[] = $meal;
         }
 
-        $this->addReference('meals', (object)$meals);
         $manager->flush();
     }
 
     private function createWorkdayFixtures(ObjectManager $manager)
     {
-        $workdays = [];
-        $meals = (array)$this->getReference('meals');
+        $meals = $manager->getRepository(Meal::class)->findAll();
         /**
          * create test phraseTypes
          */
@@ -110,30 +106,32 @@ class AppFixtures extends Fixture
         /** @var DateTime $date */
         foreach ($period as $date) {
             $workday = new Workday();
-            $workday->setDate($date->format('Y-m-d'));
+            $workday->setDate($date);
             $workday->setMeal($this->getRandomFromArray($meals));
 
             $manager->persist($workday);
-            $workdays[] = $workday;
         }
 
-        $this->addReference('workdays', (object)$workdays);
         $manager->flush();
     }
 
     private function createEntryFixtures(ObjectManager $manager)
     {
-        $users = (array)$this->getReference('users');
-        $workdays = (array)$this->getReference('workdays');
+        $users = $manager->getRepository(User::class)->findAll();
+        $workdays = $manager->getRepository(Workday::class)->findAll();
+        $minEntries = round(count($workdays) / 2);
+        $maxEntries = round(count($workdays) * 0.9);
+        $minNoteLength = 5;
+        $maxNoteLength = 10;
         /**
          * create test personalityTypes
          */
         foreach ($users as $user) {
-            for ($i = 0; $i < rand(15, 27); ++$i) {
+            for ($i = 0; $i < rand($minEntries, $maxEntries); ++$i) {
                 $entry = new Entry();
                 $entry->setUser($user);
                 if ($this->getRandomBool()) {
-                    $entry->setNote($this->getRandomString(rand(5, 10)));
+                    $entry->setNote($this->getRandomString(rand($minNoteLength, $maxNoteLength)));
                 }
                 $entry->setWorkday($this->getRandomFromArray($workdays));
 
@@ -156,7 +154,7 @@ class AppFixtures extends Fixture
         $characters = ' .,0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; ++$i) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
 
