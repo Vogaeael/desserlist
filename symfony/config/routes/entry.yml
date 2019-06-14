@@ -21,3 +21,7 @@ entry_create:
 entry_edit:
   path: /edit/entry/{id}
   controller: App\Controller\EntryController::editEntry
+
+entry_delete:
+  path: /delete/entry/{id}
+  controller: App\Controller\EntryController::deleteEntry

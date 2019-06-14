@@ -23,11 +23,19 @@ class EntryController extends AbstractController
     public function showEntry($id)
     {
         $entry = $this->getEntryById($id);
+        $userId = $entry->getUser()->getId();
 
-        return $this->render(
-            'entry/view.html.twig',
-            ['entry' => $entry,]
-        );
+        if ($this->isCurrentUser($userId)) {
+            return $this->render(
+                'entry/view.html.twig',
+                ['entry' => $entry,]
+            );
+        }
+
+        // @TODO add message to session
+        $message = $this->getNotFoundMessage(Entry::class, $id);
+
+        return $this->redirectToRoute('entry_show_all');
     }
 
     public function showAllEntry()
@@ -44,9 +52,6 @@ class EntryController extends AbstractController
         $entries = $this->getDoctrine()
             ->getRepository(Entry::class)
             ->findBy(['user' => $userId]);
-
-        //        var_dump($entries);
-        //        die;
 
         return $this->render(
             'entry/viewAllByUser.html.twig',
@@ -101,33 +106,57 @@ class EntryController extends AbstractController
     public function editEntry(Request $request, $id)
     {
         $entry = $this->getEntryById($id);
+        $userId = $entry->getUser()->getId();
 
-        $user = $this->getUser();
-        $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
-        $form = $this->createForm(
-            EntryType::class,
-            $entry,
-            [
-                'userId'      => $user->getId(),
-                'workdayRepo' => $workdayRepo,
-            ]
-        );
-        $form->handleRequest($request);
+        if ($this->isCurrentUser($userId)) {
+            $user = $this->getUser();
+            $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
+            $form = $this->createForm(
+                EntryType::class,
+                $entry,
+                [
+                    'userId'      => $user->getId(),
+                    'workdayRepo' => $workdayRepo,
+                ]
+            );
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($entry);
-            $entityManager->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($entry);
+                $entityManager->flush();
 
-            return $this->redirect('/entries');
+                return $this->redirect('/entries');
+            }
+
+            return $this->render(
+                'entry/edit.html.twig',
+                [
+                    'entryForm' => $form->createView(),
+                ]
+            );
         }
 
-        return $this->render(
-            'entry/edit.html.twig',
-            [
-                'entryForm' => $form->createView(),
-            ]
-        );
+        // @TODO add message to session
+        $message = $this->getNotFoundMessage(Entry::class, $id);
+
+        return $this->redirectToRoute('entry_show_all');
+    }
+
+    public function deleteEntry($id)
+    {
+        $entry = $this->getEntryById($id);
+        $userId = $entry->getUser()->getId();
+
+        if ($this->isCurrentUser($userId)) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($entry);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('user_show_all');
+        }
+
+        return $this->redirectToRoute('entry_show_all');
     }
 
     /**
@@ -148,5 +177,30 @@ class EntryController extends AbstractController
         }
 
         return $entry;
+    }
+
+    /**
+     * Check if the id is of the current user
+     *
+     * @param $userId
+     *
+     * @return bool
+     */
+    private function isCurrentUser($userId)
+    {
+        $currentUserId = $this->getUser()->getId();
+
+        return $currentUserId === $userId;
+    }
+
+    /**
+     * @param string $className
+     * @param        $id
+     *
+     * @return string
+     */
+    private function getNotFoundMessage(string $className, $id): string
+    {
+        return sprintf('%s with id: %s not found', $className, $id);
     }
 }

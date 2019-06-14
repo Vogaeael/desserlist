@@ -27,6 +27,9 @@
     </ul>
 </nav>
 <div class="wrapper">
+    {% if message is defined %}
+        <div class="message">{{ message }}</div>
+    {% endif %}
     {% block body %}{% endblock %}
 </div>
 {% block javascripts %}

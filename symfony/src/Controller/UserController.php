@@ -63,13 +63,6 @@ class UserController extends AbstractController
         return $this->handleForm($user, $request);
     }
 
-    //    public function newUser(Request $request) {
-    //        $user = new User();
-    //
-    //        return $this->handleForm($user, $request);
-    //
-    //    }
-
     private function handleForm(User $user, Request $request)
     {
         $form = $this->createForm(UserType::class, $user);
