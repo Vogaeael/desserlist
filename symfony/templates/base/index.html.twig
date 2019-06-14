@@ -18,6 +18,10 @@
     </style>
 
     <div class="example-wrapper">
+        {{ if user is defined }}
+        <h1>Hello {{ user.name }}</h1>
+
+        {{ else }}
         <h1>Hello {{ controller_name }}! ✅</h1>
 
         This friendly message is coming from:
@@ -27,5 +31,6 @@
             <li>Your template at <code><a href="{{ '/var/www/html/templates/base/index.html.twig'|file_link(0) }}">templates/base/index.html.twig</a></code>
             </li>
         </ul>
+        {{ endif }}
     </div>
 {% endblock %}

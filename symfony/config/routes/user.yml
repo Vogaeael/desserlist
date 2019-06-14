@@ -6,9 +6,9 @@ user_show:
   path: /user/{id}
   controller: App\Controller\UserController::showUser
 
-user_show_all:
-  path: /users
-  controller: App\Controller\UserController::showAllUser
+#user_show_all:
+#  path: /users
+#  controller: App\Controller\UserController::showAllUser
 
 user_delete:
   path: /user/delete/{id}

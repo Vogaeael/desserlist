@@ -22,6 +22,7 @@ class EntryController extends AbstractController
 
     public function showEntry($id)
     {
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = $this->getEntryById($id);
         $userId = $entry->getUser()->getId();
 
@@ -40,6 +41,7 @@ class EntryController extends AbstractController
 
     public function showAllEntry()
     {
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $user = $this->getUser();
@@ -63,6 +65,7 @@ class EntryController extends AbstractController
 
     public function showEntriesOnDate($date)
     {
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
         // @TODO überarbeiten
         $entries = $this->getDoctrine()
             ->getRepository(Entry::class)
@@ -71,26 +74,16 @@ class EntryController extends AbstractController
 
     public function createEntry(Request $request)
     {
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = new Entry();
 
         $user = $this->getUser();
-        $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
-        $form = $this->createForm(
-            EntryType::class,
-            $entry,
-            [
-                'userId'      => $user->getId(),
-                'workdayRepo' => $workdayRepo,
-            ]
-        );
-        $form->handleRequest($request);
+        $form = $this->getEntryForm($request, $entry, $user->getId());
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entry->setUser($user);
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($entry);
-            $entityManager->flush();
+            $this->saveEntry($entry);
 
             return $this->redirect('/entries');
         }
@@ -105,26 +98,16 @@ class EntryController extends AbstractController
 
     public function editEntry(Request $request, $id)
     {
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = $this->getEntryById($id);
         $userId = $entry->getUser()->getId();
 
         if ($this->isCurrentUser($userId)) {
-            $user = $this->getUser();
-            $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
-            $form = $this->createForm(
-                EntryType::class,
-                $entry,
-                [
-                    'userId'      => $user->getId(),
-                    'workdayRepo' => $workdayRepo,
-                ]
-            );
-            $form->handleRequest($request);
+            $userId = $this->getUser()->getId();
+            $form = $this->getEntryForm($request, $entry, $userId);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($entry);
-                $entityManager->flush();
+                $this->saveEntry($entry);
 
                 return $this->redirect('/entries');
             }
@@ -145,6 +128,7 @@ class EntryController extends AbstractController
 
     public function deleteEntry($id)
     {
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = $this->getEntryById($id);
         $userId = $entry->getUser()->getId();
 
@@ -202,5 +186,40 @@ class EntryController extends AbstractController
     private function getNotFoundMessage(string $className, $id): string
     {
         return sprintf('%s with id: %s not found', $className, $id);
+    }
+
+    /**
+     * Persist and flush the entry
+     *
+     * @param Entry $entry
+     */
+    private function saveEntry(Entry $entry): void
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($entry);
+        $entityManager->flush();
+    }
+
+    /**
+     * create entry form and handle the Request
+     *
+     * @param Request $request
+     * @param Entry   $entry
+     * @param         $userId
+     *
+     * @return EntryType
+     */
+    private function getEntryForm(Request $request, Entry $entry, $userId): EntryType
+    {
+        $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
+        $form = $this->createForm(
+            EntryType::class,
+            $entry,
+            [
+                'userId'      => $userId,
+                'workdayRepo' => $workdayRepo,
+            ]
+        );
+        $form->handleRequest($request);
     }
 }

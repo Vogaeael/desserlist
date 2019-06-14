@@ -21,46 +21,70 @@ class UserController extends AbstractController
 
     public function showUser($id)
     {
-        $user = $this->getUserById($id);
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isCurrentUser($id)) {
+            $user = $this->getUserById($id);
 
-        return $this->render(
-            'user/view.html.twig',
-            [
-                'user' => $user,
-            ]
-        );
+            return $this->render(
+                'user/view.html.twig',
+                [
+                    'user' => $user,
+                ]
+            );
+        }
+
+        // @TODO add message to session
+        $message = $this->getNotFoundMessage(User::class, $id);
+
+        return $this->redirectToRoute('home');
     }
 
-    public function showAllUser()
-    {
-        $users = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->findAll();
-
-        return $this->render(
-            'user/viewAll.html.twig',
-            [
-                'users' => $users,
-            ]
-        );
-    }
+    //    public function showAllUser()
+    //    {
+    //        $users = $this->getDoctrine()
+    //            ->getRepository(User::class)
+    //            ->findAll();
+    //
+    //        return $this->render(
+    //            'user/viewAll.html.twig',
+    //            [
+    //                'users' => $users,
+    //            ]
+    //        );
+    //    }
 
     public function deleteUser($id)
     {
-        $user = $this->getUserById($id);
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isCurrentUser($id)) {
+            $user = $this->getUserById($id);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($user);
-        $entityManager->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($user);
+            $entityManager->flush();
 
-        return $this->redirectToRoute('user_show_all');
+            return $this->redirectToRoute('user_show_all');
+        }
+
+        // @TODO add message to session
+        $message = $this->getNotFoundMessage(User::class, $id);
+
+        return $this->redirectToRoute('home');
     }
 
     public function editUser($id, Request $request)
     {
-        $user = $this->getUserById($id);
+        $this->isGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isCurrentUser($id)) {
+            $user = $this->getUserById($id);
 
-        return $this->handleForm($user, $request);
+            return $this->handleForm($user, $request);
+        }
+
+        // @TODO add message to session
+        $message = $this->getNotFoundMessage(User::class, $id);
+
+        return $this->redirectToRoute('home');
     }
 
     private function handleForm(User $user, Request $request)
@@ -99,5 +123,30 @@ class UserController extends AbstractController
         }
 
         return $user;
+    }
+
+    /**
+     * Check if the id is of the current user
+     *
+     * @param $userId
+     *
+     * @return bool
+     */
+    private function isCurrentUser($userId)
+    {
+        $currentUserId = $this->getUser()->getId();
+
+        return $currentUserId === $userId;
+    }
+
+    /**
+     * @param string $className
+     * @param        $id
+     *
+     * @return string
+     */
+    private function getNotFoundMessage(string $className, $id): string
+    {
+        return sprintf('%s with id: %s not found', $className, $id);
     }
 }
