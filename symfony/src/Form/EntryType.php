@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Workday;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -17,10 +18,14 @@ class EntryType extends AbstractType
         $userId = $this->getOption($options, 'userId');
 
         // @TODO verbessern damit nur die noch nicht ausgewählten geholt werden
-        $possibleWorkDays = $workdayRepo->findAll();
+        $possibleWorkdays = $workdayRepo->findAll();
 
         $builder
-            ->add('workday', ChoiceType::class, ['choices' => $possibleWorkDays])
+            ->add(
+                'workday',
+                ChoiceType::class,
+                ['choices' => $possibleWorkdays, 'choice_label' => $this->getWorkdayLabelFunction()]
+            )
             ->add('note', TextType::class, ['required' => false])
             ->add('save', SubmitType::class);
     }
@@ -49,5 +54,21 @@ class EntryType extends AbstractType
         }
 
         return $result;
+    }
+
+    /**
+     * @return \Closure
+     */
+    private function getWorkdayLabelFunction()
+    {
+        return function ($choice, $key, $value) {
+            $label = strtoupper($key);
+            if (is_a($choice, Workday::class)) {
+                $label = $choice->getDate()->format('Y-m-d');
+                $label .= ': ' . $choice->getMeal()->getName();
+            }
+
+            return $label;
+        };
     }
 }
