@@ -18,10 +18,11 @@
     </style>
 
     <div class="example-wrapper">
-        {{ if user is defined }}
-        <h1>Hello {{ user.name }}</h1>
-
-        {{ else }}
+        {% if user is defined %}
+        <h1>Hello {{ user.name }} {{ user.id }}</h1>
+        <a href="{{ path('user_delete', {'id': user.id}) }}">Delete account</a>
+        <a href="{{ path('user_edit', {'id': user.id}) }}">Edit account</a>
+        {% else %}
         <h1>Hello {{ controller_name }}! ✅</h1>
 
         This friendly message is coming from:
@@ -31,6 +32,6 @@
             <li>Your template at <code><a href="{{ '/var/www/html/templates/base/index.html.twig'|file_link(0) }}">templates/base/index.html.twig</a></code>
             </li>
         </ul>
-        {{ endif }}
+        {% endif %}
     </div>
 {% endblock %}

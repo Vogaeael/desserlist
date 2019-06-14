@@ -27,5 +27,5 @@ App\Entity\User:
   oneToMany:
     entries:
       targetEntity: Entry
-      mappedBy: userId
-      oneDelete: CASCADE
+      mappedBy: user
+      cascase: ["remove"]

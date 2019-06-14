@@ -11,12 +11,7 @@ class UserController extends AbstractController
 {
     public function index()
     {
-        return $this->render(
-            'user/index.html.twig',
-            [
-                'controller_name' => 'UserController',
-            ]
-        );
+        return $this->redirectToRoute('home');
     }
 
     public function showUser($id)
@@ -63,7 +58,7 @@ class UserController extends AbstractController
             $entityManager->remove($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('user_show_all');
+            return $this->redirect('/logout');
         }
 
         // @TODO add message to session
@@ -134,9 +129,9 @@ class UserController extends AbstractController
      */
     private function isCurrentUser($userId)
     {
-        $currentUserId = $this->getUser()->getId();
+        $currentUserId = (int)$this->getUser()->getId();
 
-        return $currentUserId === $userId;
+        return $currentUserId === (int)$userId;
     }
 
     /**

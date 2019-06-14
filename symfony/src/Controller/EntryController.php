@@ -6,6 +6,7 @@ use App\Entity\Entry;
 use App\Entity\Workday;
 use App\Form\EntryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class EntryController extends AbstractController
@@ -137,7 +138,7 @@ class EntryController extends AbstractController
             $entityManager->remove($entry);
             $entityManager->flush();
 
-            return $this->redirectToRoute('user_show_all');
+            return $this->redirectToRoute('entry_show_all');
         }
 
         return $this->redirectToRoute('entry_show_all');
@@ -209,7 +210,7 @@ class EntryController extends AbstractController
      *
      * @return EntryType
      */
-    private function getEntryForm(Request $request, Entry $entry, $userId): EntryType
+    private function getEntryForm(Request $request, Entry $entry, $userId): FormInterface
     {
         $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
         $form = $this->createForm(
@@ -220,6 +221,6 @@ class EntryController extends AbstractController
                 'workdayRepo' => $workdayRepo,
             ]
         );
-        $form->handleRequest($request);
+        return $form->handleRequest($request);
     }
 }
