@@ -40,7 +40,6 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        shuffle($this->meals);
         $this->createUserFixtures($manager);
         $this->createMealFixtures($manager);
         $this->createWorkdayFixtures($manager);
