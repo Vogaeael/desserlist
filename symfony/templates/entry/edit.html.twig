@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Entry{% endblock %}
+
+{% block body %}
+    <h1>Edit Entry</h1>
+
+    {{ form_start(entryForm) }}
+    {{ form_row(entryForm.workday) }}
+    {{ form_row(entryForm.note) }}
+    {{ form_end(entryForm) }}
+{% endblock %}

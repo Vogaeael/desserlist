@@ -17,3 +17,7 @@ entry_on_date:
 entry_create:
   path: /create/entry
   controller: App\Controller\EntryController::createEntry
+
+entry_edit:
+  path: /edit/entry/{id}
+  controller: App\Controller\EntryController::editEntry

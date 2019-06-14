@@ -91,7 +91,39 @@ class EntryController extends AbstractController
         }
 
         return $this->render(
-            'entry/createEntry.html.twig',
+            'entry/create.html.twig',
+            [
+                'entryForm' => $form->createView(),
+            ]
+        );
+    }
+
+    public function editEntry(Request $request, $id)
+    {
+        $entry = $this->getEntryById($id);
+
+        $user = $this->getUser();
+        $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
+        $form = $this->createForm(
+            EntryType::class,
+            $entry,
+            [
+                'userId'      => $user->getId(),
+                'workdayRepo' => $workdayRepo,
+            ]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($entry);
+            $entityManager->flush();
+
+            return $this->redirect('/entries');
+        }
+
+        return $this->render(
+            'entry/edit.html.twig',
             [
                 'entryForm' => $form->createView(),
             ]
