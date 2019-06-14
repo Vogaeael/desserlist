@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Your Entries{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">
+        <h1>Entry</h1>
+        <table>
+            <tr>
+                <th>Date</th>
+                <td>{{ entry.workday.date|date('Y-m-d') }}</td>
+            </tr>
+            <tr>
+                <th>Meal</th>
+                <td>{{ entry.workday.meal.name }}</td>
+            </tr>
+            <tr>
+                <th>Note</th>
+                <td>{{ entry.note }}</td>
+            </tr>
+            <tr>
+                <th>Actions</th>
+                <td>
+                    <ul>
+{#                        <li><a href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a></li>#}
+{#                        <li><a href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a></li>#}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

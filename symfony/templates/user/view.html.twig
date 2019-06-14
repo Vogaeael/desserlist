@@ -9,9 +9,9 @@
             <li>Email: {{ user.email }}</li>
             <li>Name: {{ user.name }}</li>
             <li>Roles: {% for role in user.roles %}{{ role }}, {% endfor %}</li>
-            <li>Actions: <a href="/user/delete/{{ user.id }}">Delete</a>, <a href="/user/edit/{{ user.id }}">Edit</a></li>
+            <li>Actions: <a href="{{ path('user_delete', {'id': user.id }) }}">Delete</a>, <a href="{{ path('user_edit', {'id': user.id }) }}">Edit</a></li>
         </ul>
     </div>
 
-    <a href="/users">Show all Users</a>
+    <a href="{{ path('user_show_all') }}">Show all Users</a>
 {% endblock %}
