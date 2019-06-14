@@ -28,4 +28,4 @@ App\Entity\User:
     entries:
       targetEntity: Entry
       mappedBy: user
-      cascase: ["remove"]
+      cascade: ["remove"]
