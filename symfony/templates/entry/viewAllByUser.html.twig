@@ -15,8 +15,8 @@
             </tr>
             {% for entry in entries %}
                 <tr>
-                    <td>{{ entry.workday }}</td>
-                    <td>{{ entry.workday.meal }}</td>
+                    <td>{{ entry.workday.date|date('Y-m-d') }}</td>
+                    <td>{{ entry.workday.meal.name }}</td>
                     <td>{{ entry.note }}</td>
                     <td>
                         <ul>
