@@ -5,7 +5,7 @@
 {% block body %}
     <div class="example-wrapper">
         <h1>Hello {{ user.name }}!</h1>
-        <ul class="table-list">
+        <ul>
             <li>Email: {{ user.email }}</li>
             <li>Name: {{ user.name }}</li>
             <li>Roles: {% for role in user.roles %}{{ role }}, {% endfor %}</li>

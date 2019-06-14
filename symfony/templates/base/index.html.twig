@@ -19,9 +19,13 @@
 
     <div class="example-wrapper">
         {% if user is defined %}
-        <h1>Hello {{ user.name }} {{ user.id }}</h1>
-        <a href="{{ path('user_delete', {'id': user.id}) }}">Delete account</a>
-        <a href="{{ path('user_edit', {'id': user.id}) }}">Edit account</a>
+        <h1>Hello {{ user.name }}</h1>
+            <ul>
+                <li>Email: {{ user.email }}</li>
+                <li>Name: {{ user.name }}</li>
+                <li>Roles: {% for role in user.roles %}{{ role }}, {% endfor %}</li>
+                <li>Actions: <a href="{{ path('user_delete', {'id': user.id }) }}">Delete</a>, <a href="{{ path('user_edit', {'id': user.id }) }}">Edit</a></li>
+            </ul>
         {% else %}
         <h1>Hello {{ controller_name }}! ✅</h1>
 
