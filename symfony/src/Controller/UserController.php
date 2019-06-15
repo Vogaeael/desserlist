@@ -16,7 +16,6 @@ class UserController extends AbstractController
 
     public function showUser($id)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCurrentUser($id)) {
             $user = $this->getUserById($id);
 
@@ -50,7 +49,6 @@ class UserController extends AbstractController
 
     public function deleteUser($id)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCurrentUser($id)) {
             $user = $this->getUserById($id);
 
@@ -69,7 +67,6 @@ class UserController extends AbstractController
 
     public function editUser($id, Request $request)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         if ($this->isCurrentUser($id)) {
             $user = $this->getUserById($id);
 

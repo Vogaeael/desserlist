@@ -12,4 +12,10 @@ class WorkdayRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Workday::class);
     }
+
+//    public function findUnregisteredWorkdays($userId)
+//    {
+//        $qb = $this->createQueryBuilder('u')
+//            ->
+//    }
 }

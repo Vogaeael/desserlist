@@ -23,7 +23,6 @@ class EntryController extends AbstractController
 
     public function showEntry($id)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = $this->getEntryById($id);
         $userId = $entry->getUser()->getId();
 
@@ -42,7 +41,6 @@ class EntryController extends AbstractController
 
     public function showAllEntry()
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $user = $this->getUser();
@@ -66,7 +64,6 @@ class EntryController extends AbstractController
 
     public function showEntriesOnDate($date)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         // @TODO überarbeiten
         $entries = $this->getDoctrine()
             ->getRepository(Entry::class)
@@ -75,7 +72,6 @@ class EntryController extends AbstractController
 
     public function createEntry(Request $request)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = new Entry();
 
         $user = $this->getUser();
@@ -99,7 +95,6 @@ class EntryController extends AbstractController
 
     public function editEntry(Request $request, $id)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = $this->getEntryById($id);
         $userId = $entry->getUser()->getId();
 
@@ -129,7 +124,6 @@ class EntryController extends AbstractController
 
     public function deleteEntry($id)
     {
-        $this->isGranted('IS_AUTHENTICATED_FULLY');
         $entry = $this->getEntryById($id);
         $userId = $entry->getUser()->getId();
 

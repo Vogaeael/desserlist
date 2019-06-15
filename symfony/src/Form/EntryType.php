@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Workday;
+use App\Repository\WorkdayRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,11 +15,13 @@ class EntryType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var WorkdayRepository $workdayRepo */
         $workdayRepo = $this->getOption($options, 'workdayRepo');
         $userId = $this->getOption($options, 'userId');
 
-        // @TODO verbessern damit nur die noch nicht ausgewählten geholt werden
         $possibleWorkdays = $workdayRepo->findAll();
+        // @TODO verbessern damit nur die noch nicht ausgewählten geholt werden
+//        $possibleWorkdays = $workdayRepo->findUnregisteredWorkdays($userId);
 
         $builder
             ->add(
