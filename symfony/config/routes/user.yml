@@ -10,9 +10,9 @@ user_show:
 #  path: /users
 #  controller: App\Controller\UserController::showAllUser
 
-user_delete:
-  path: /user/delete/{id}
-  controller: App\Controller\UserController::deleteUser
+#user_delete:
+#  path: /user/delete/{id}
+#  controller: App\Controller\UserController::deleteUser
 
 user_edit:
   path: /user/edit/{id}

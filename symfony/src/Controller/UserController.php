@@ -47,23 +47,23 @@ class UserController extends AbstractController
     //        );
     //    }
 
-    public function deleteUser($id)
-    {
-        if ($this->isCurrentUser($id)) {
-            $user = $this->getUserById($id);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            return $this->redirect('/logout');
-        }
-
-        // @TODO add message to session
-        $message = $this->getNotFoundMessage(User::class, $id);
-
-        return $this->redirectToRoute('home');
-    }
+    //    public function deleteUser($id)
+    //    {
+    //        if ($this->isCurrentUser($id)) {
+    //            $user = $this->getUserById($id);
+    //
+    //            $entityManager = $this->getDoctrine()->getManager();
+    //            $entityManager->remove($user);
+    //            $entityManager->flush();
+    //
+    //            return $this->redirect('/logout');
+    //        }
+    //
+    //        // @TODO add message to session
+    //        $message = $this->getNotFoundMessage(User::class, $id);
+    //
+    //        return $this->redirectToRoute('home');
+    //    }
 
     public function editUser($id, Request $request)
     {
@@ -91,7 +91,10 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
+            return $this->redirectToRoute(
+                'user_show',
+                ['id' => $user->getId()]
+            );
         }
 
         return $this->render(
@@ -137,8 +140,14 @@ class UserController extends AbstractController
      *
      * @return string
      */
-    private function getNotFoundMessage(string $className, $id): string
-    {
-        return sprintf('%s with id: %s not found', $className, $id);
+    private function getNotFoundMessage(
+        string $className,
+        $id
+    ): string {
+        return sprintf(
+            '%s with id: %s not found',
+            $className,
+            $id
+        );
     }
 }
