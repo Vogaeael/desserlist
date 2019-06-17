@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Entry;
 use App\Entity\Workday;
 use App\Form\EntryType;
+use App\Repository\WorkdayRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,8 +42,6 @@ class EntryController extends AbstractController
 
     public function showAllEntry()
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $user = $this->getUser();
 
         $userId = null;
@@ -54,20 +53,19 @@ class EntryController extends AbstractController
             ->getRepository(Entry::class)
             ->findBy(['user' => $userId]);
 
+        $notRegisterdWorkdays = $this->getDoctrine()
+            ->getRepository(Workday::class)
+            ->findUnregisteredWorkdays($userId);
+
+        $addEntry = [] !== $notRegisterdWorkdays;
+
         return $this->render(
             'entry/viewAllByUser.html.twig',
             [
-                'entries' => $entries,
+                'entries'  => $entries,
+                'addEntry' => $addEntry,
             ]
         );
-    }
-
-    public function showEntriesOnDate($date)
-    {
-        // @TODO überarbeiten
-        $entries = $this->getDoctrine()
-            ->getRepository(Entry::class)
-            ->findAll();
     }
 
     public function createEntry(Request $request)
@@ -75,7 +73,11 @@ class EntryController extends AbstractController
         $entry = new Entry();
 
         $user = $this->getUser();
-        $form = $this->getEntryForm($request, $entry, $user->getId());
+        $form = $this->getEntryForm(
+            $request,
+            $entry,
+            $user->getId()
+        );
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entry->setUser($user);
@@ -100,7 +102,11 @@ class EntryController extends AbstractController
 
         if ($this->isCurrentUser($userId)) {
             $userId = $this->getUser()->getId();
-            $form = $this->getEntryForm($request, $entry, $userId);
+            $form = $this->getEntryForm(
+                $request,
+                $entry,
+                $userId
+            );
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $this->saveEntry($entry);
@@ -178,9 +184,15 @@ class EntryController extends AbstractController
      *
      * @return string
      */
-    private function getNotFoundMessage(string $className, $id): string
-    {
-        return sprintf('%s with id: %s not found', $className, $id);
+    private function getNotFoundMessage(
+        string $className,
+        $id
+    ): string {
+        return sprintf(
+            '%s with id: %s not found',
+            $className,
+            $id
+        );
     }
 
     /**
@@ -204,9 +216,14 @@ class EntryController extends AbstractController
      *
      * @return EntryType
      */
-    private function getEntryForm(Request $request, Entry $entry, $userId): FormInterface
-    {
-        $workdayRepo = $this->getDoctrine()->getRepository(Workday::class);
+    private function getEntryForm(
+        Request $request,
+        Entry $entry,
+        $userId
+    ): FormInterface {
+        $workdayRepo = $this->getDoctrine()->getRepository(
+            Workday::class
+        );
         $form = $this->createForm(
             EntryType::class,
             $entry,
@@ -215,6 +232,7 @@ class EntryController extends AbstractController
                 'workdayRepo' => $workdayRepo,
             ]
         );
+
         return $form->handleRequest($request);
     }
 }

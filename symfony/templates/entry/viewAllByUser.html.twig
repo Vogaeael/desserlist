@@ -6,29 +6,37 @@
     <div class="example-wrapper">
         <h1>Entries</h1>
         {% if entries|length > 0 %}
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Meal</th>
-                <th>Note</th>
-                <th>Actions</th>
-            </tr>
-            {% for entry in entries %}
+            <table>
                 <tr>
-                    <td>{{ entry.workday.date|date('Y-m-d') }}</td>
-                    <td>{{ entry.workday.meal.name }}</td>
-                    <td>{{ entry.note }}</td>
-                    <td>
-                        <ul>
-                            <li><a href="{{ path('entry_show', {'id': entry.id }) }}">View</a></li>
-                            <li><a href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a></li>
-                            <li><a href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a></li>
-                        </ul>
-                    </td>
+                    <th>Date</th>
+                    <th>Meal</th>
+                    <th>Note</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.workday.date|date('Y-m-d') }}</td>
+                        <td>{{ entry.workday.meal.name }}</td>
+                        <td>{{ entry.note }}</td>
+                        <td>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('entry_show', {'id': entry.id }) }}">View</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         {% endif %}
-        <span><a href="{{ path('entry_create') }}">Create an Entry</a></span>
+        {% if addEntry %}
+            <span><a href="{{ path('entry_create') }}">Create an Entry</a></span>
+        {% endif %}
     </div>
 {% endblock %}
