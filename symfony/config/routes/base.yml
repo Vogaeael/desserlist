@@ -1,6 +1,6 @@
 home:
   path: /
-  controller: App\Controller\BaseController::index
+  controller: App\Controller\IndexController::index
 
 app_register:
   path: /register
