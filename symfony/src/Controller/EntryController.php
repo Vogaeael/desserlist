@@ -51,13 +51,9 @@ class EntryController extends AbstractController
 
         $entries = $this->getDoctrine()
             ->getRepository(Entry::class)
-            ->findBy(['user' => $userId]);
+            ->findUserEntriesOrderedByDate($userId);
 
-        $notRegisterdWorkdays = $this->getDoctrine()
-            ->getRepository(Workday::class)
-            ->findUnregisteredWorkdays($userId);
-
-        $addEntry = [] !== $notRegisterdWorkdays;
+        $addEntry = !$this->registeredInAllWorkdays($userId);
 
         return $this->render(
             'entry/viewAllByUser.html.twig',
@@ -234,5 +230,20 @@ class EntryController extends AbstractController
         );
 
         return $form->handleRequest($request);
+    }
+
+    /**
+     * True if the user is registered on all workdays
+     *
+     * @param $userId
+     *
+     * @return bool
+     */
+    private function registeredInAllWorkdays($userId) {
+        $notRegisteredWorkdays = $this->getDoctrine()
+            ->getRepository(Workday::class)
+            ->findUnregisteredWorkdays($userId);
+
+        return [] === $notRegisteredWorkdays;
     }
 }

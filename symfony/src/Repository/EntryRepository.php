@@ -12,4 +12,15 @@ class EntryRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Entry::class);
     }
+
+    public function findUserEntriesOrderedByDate($userId)
+    {
+        $qb = $this->createQueryBuilder('e');
+        $qb->select('e')
+            ->where('e.user = :userId')
+            ->join('e.workday', 'w', 'WITH')
+            ->orderBy('w.date', 'ASC')
+            ->setParameter('userId', $userId);
+        return $qb->getQuery()->getResult();
+    }
 }
