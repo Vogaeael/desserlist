@@ -13,23 +13,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntryType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(
+        FormBuilderInterface $builder,
+        array $options
+    ) {
         /** @var WorkdayRepository $workdayRepo */
-        $workdayRepo = $this->getOption($options, 'workdayRepo');
+        $workdayRepo =
+            $this->getOption($options, 'workdayRepo');
         $userId = $this->getOption($options, 'userId');
 
-        $possibleWorkdays = $workdayRepo->findAll();
-        // @TODO verbessern damit nur die noch nicht ausgewählten geholt werden
-//        $possibleWorkdays = $workdayRepo->findUnregisteredWorkdays($userId);
+        $possibleWorkdays =
+            $workdayRepo->findUnregisteredWorkdays($userId);
 
         $builder
             ->add(
                 'workday',
                 ChoiceType::class,
-                ['choices' => $possibleWorkdays, 'choice_label' => $this->getWorkdayLabelFunction()]
+                [
+                    'choices'      => $possibleWorkdays,
+                    'choice_label' => $this->getWorkdayLabelFunction(
+                    ),
+                ]
             )
-            ->add('note', TextType::class, ['required' => false])
+            ->add(
+                'note',
+                TextType::class,
+                ['required' => false]
+            )
             ->add('save', SubmitType::class);
     }
 
@@ -49,8 +59,11 @@ class EntryType extends AbstractType
      *
      * @return mixed|null
      */
-    private function getOption(array $options, string $key, $default = null)
-    {
+    private function getOption(
+        array $options,
+        string $key,
+        $default = null
+    ) {
         $result = $default;
         if (array_key_exists($key, $options)) {
             $result = $options[$key];
