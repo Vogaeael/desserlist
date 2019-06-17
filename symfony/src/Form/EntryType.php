@@ -18,15 +18,18 @@ class EntryType extends AbstractType
         array $options
     ) {
         /** @var WorkdayRepository $workdayRepo */
-        $workdayRepo =
-            $this->getOption($options, 'workdayRepo');
+        $workdayRepo = $this->getOption(
+            $options,
+            'workdayRepo'
+        );
         $userId = $this->getOption($options, 'userId');
 
-        $possibleWorkdays =
-            $workdayRepo->findUnregisteredWorkdays($userId);
+        $possibleWorkdays = $workdayRepo->findUnregisteredWorkdays(
+            $userId
+        );
 
-        $builder
-            ->add(
+        if ([] !== $possibleWorkdays) {
+            $builder->add(
                 'workday',
                 ChoiceType::class,
                 [
@@ -34,12 +37,14 @@ class EntryType extends AbstractType
                     'choice_label' => $this->getWorkdayLabelFunction(
                     ),
                 ]
-            )
-            ->add(
-                'note',
-                TextType::class,
-                ['required' => false]
-            )
+            );
+        }
+
+        $builder->add(
+            'note',
+            TextType::class,
+            ['required' => false]
+        )
             ->add('save', SubmitType::class);
     }
 
