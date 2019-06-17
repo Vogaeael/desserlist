@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use mysql_xdevapi\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -80,7 +81,9 @@ class BaseController extends AbstractController
     protected function isCurrentUser($userId)
     {
         $currentUserId = $this->getUser()->getId();
-
+        if ($currentUserId !== $userId) {
+            throw $this->createAccessDeniedException();
+        }
         return $currentUserId === $userId;
     }
 }

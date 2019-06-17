@@ -13,7 +13,9 @@ class UserController extends BaseController
 
     public function showUser($id)
     {
-        if ($this->isCurrentUser($id)) {
+        try {
+            $this->isCurrentUser($id);
+
             $user = $this->getUserById($id);
 
             return $this->render(
@@ -24,12 +26,11 @@ class UserController extends BaseController
                     ),
                 ]
             );
+        } catch (\Exception $e) {
+            $this->addMessageToSession($e->getMessage());
+
+            return $this->redirectToRoute('home');
         }
-
-        $message = $this->getNotFoundMessage(User::class, $id);
-        $this->addMessageToSession($message);
-
-        return $this->redirectToRoute('home');
     }
 
     //    public function showAllUser()
@@ -112,7 +113,7 @@ class UserController extends BaseController
 
         if (!$user) {
             throw $this->createNotFoundException(
-                'No user found for id ' . $id
+                $this->getNotFoundMessage(User::class, $id)
             );
         }
 

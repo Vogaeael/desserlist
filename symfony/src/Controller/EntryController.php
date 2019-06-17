@@ -22,10 +22,11 @@ class EntryController extends BaseController
 
     public function showEntry($id)
     {
-        $entry = $this->getEntryById($id);
-        $userId = $entry->getUser()->getId();
+        try {
+            $entry = $this->getEntryById($id);
+            $userId = $entry->getUser()->getId();
+            $this->isCurrentUser($userId);
 
-        if ($this->isCurrentUser($userId)) {
             return $this->render(
                 'entry/view.html.twig',
                 [
@@ -34,12 +35,11 @@ class EntryController extends BaseController
                     ),
                 ]
             );
+        } catch (\Exception $e) {
+            $this->addMessageToSession($e->getMessage());
+
+            return $this->redirectToRoute('entry_show_all');
         }
-
-        $message = $this->getNotFoundMessage(Entry::class, $id);
-        $this->addMessageToSession($message);
-
-        return $this->redirectToRoute('entry_show_all');
     }
 
     public function showAllEntry()
@@ -99,11 +99,12 @@ class EntryController extends BaseController
 
     public function editEntry(Request $request, $id)
     {
-        $entry = $this->getEntryById($id);
-        $userId = $entry->getUser()->getId();
+        try {
+            $entry = $this->getEntryById($id);
+            $userId = $entry->getUser()->getId();
 
-        if ($this->isCurrentUser($userId)) {
-            $userId = $this->getUser()->getId();
+            $this->isCurrentUser($userId);
+
             $form = $this->getEntryForm(
                 $request,
                 $entry,
@@ -124,26 +125,27 @@ class EntryController extends BaseController
                     ),
                 ]
             );
+        } catch (\Exception $e) {
+            $this->addMessageToSession($e->getMessage());
+
+            return $this->redirectToRoute('entry_show_all');
         }
-
-        $message = $this->getNotFoundMessage(Entry::class, $id);
-        $this->addMessageToSession($message);
-
-        return $this->redirectToRoute('entry_show_all');
     }
 
     public function deleteEntry($id)
     {
-        $entry = $this->getEntryById($id);
-        $userId = $entry->getUser()->getId();
+        try {
+            $entry = $this->getEntryById($id);
+            $userId = $entry->getUser()->getId();
 
-        if ($this->isCurrentUser($userId)) {
+            $this->isCurrentUser($userId);
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($entry);
             $entityManager->flush();
+        } finally {
+            return $this->redirectToRoute('entry_show_all');
         }
-
-        return $this->redirectToRoute('entry_show_all');
     }
 
     /**
@@ -158,9 +160,8 @@ class EntryController extends BaseController
             ->find($id);
 
         if (!$entry) {
-            // @TODO catch it somewhere
             throw $this->createNotFoundException(
-                'No entry found for id ' . $id
+                $this->getNotFoundMessage(Entry::class, $id)
             );
         }
 
