@@ -29,12 +29,13 @@ class AppFixtures extends Fixture
         'Griechische Zitronensuppe mit Hack - Reisbällchen' => 'https://www.chefkoch.de/rezepte/1242261229011350/Griechische-Zitronensuppe-mit-Hack-Reisbaellchen.html',
         'Lockere Erdbeertorte'                              => 'https://www.chefkoch.de/rezepte/2794561431614383/Lockere-Erdbeertorte.html',
         'Asiatische Gemüsesuppe - pikant'                   => 'https://www.chefkoch.de/rezepte/1092421215259171/Asiatische-Gemuesesuppe-pikant.html',
-        'Gekochte Elfenaugen' => null,
-        'Verbrantes Handy' => null,
+        'Gekochte Elfenaugen'                               => null,
+        'Verbrantes Handy'                                  => null,
     ];
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-    {
+    public function __construct(
+        UserPasswordEncoderInterface $passwordEncoder
+    ) {
         $this->passwordEncoder = $passwordEncoder;
     }
 
@@ -81,7 +82,9 @@ class AppFixtures extends Fixture
             $meal->setName($mealName);
             $meal->setLink($mealLink);
             if ($this->getRandomBool()) {
-                $meal->setDescription($this->getRandomString(100));
+                $meal->setDescription(
+                    $this->getRandomString(100)
+                );
             }
 
             $manager->persist($meal);
@@ -90,9 +93,11 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 
-    private function createWorkdayFixtures(ObjectManager $manager)
-    {
-        $meals = $manager->getRepository(Meal::class)->findAll();
+    private function createWorkdayFixtures(
+        ObjectManager $manager
+    ) {
+        $meals = $manager->getRepository(Meal::class)
+            ->findAll();
         /**
          * create test phraseTypes
          */
@@ -106,7 +111,9 @@ class AppFixtures extends Fixture
         foreach ($period as $date) {
             $workday = new Workday();
             $workday->setDate($date);
-            $workday->setMeal($this->getRandomFromArray($meals));
+            $workday->setMeal(
+                $this->getRandomFromArray($meals)
+            );
 
             $manager->persist($workday);
         }
@@ -116,8 +123,10 @@ class AppFixtures extends Fixture
 
     private function createEntryFixtures(ObjectManager $manager)
     {
-        $users = $manager->getRepository(User::class)->findAll();
-        $workdays = $manager->getRepository(Workday::class)->findAll();
+        $users = $manager->getRepository(User::class)
+            ->findAll();
+        $workdays = $manager->getRepository(Workday::class)
+            ->findAll();
         $minEntries = round(count($workdays) / 2);
         $maxEntries = round(count($workdays) * 0.9);
         $minNoteLength = 5;
@@ -126,13 +135,36 @@ class AppFixtures extends Fixture
          * create test personalityTypes
          */
         foreach ($users as $user) {
-            for ($i = 0; $i < rand($minEntries, $maxEntries); ++$i) {
+            $workdaysNotUsedOfUser = $workdays;
+            for ($i = 0; $i < rand($minEntries, $maxEntries);
+                 ++$i) {
                 $entry = new Entry();
                 $entry->setUser($user);
                 if ($this->getRandomBool()) {
-                    $entry->setNote($this->getRandomString(rand($minNoteLength, $maxNoteLength)));
+                    $entry->setNote(
+                        $this->getRandomString(
+                            rand($minNoteLength, $maxNoteLength)
+                        )
+                    );
                 }
-                $entry->setWorkday($this->getRandomFromArray($workdays));
+                $workday = $this->getRandomFromArray(
+                    $workdaysNotUsedOfUser
+                );
+
+                $index = array_search(
+                    $workday,
+                    $workdaysNotUsedOfUser
+                );
+                if (false !== $index) {
+                    unset($workdaysNotUsedOfUser[$index]);
+                    $workdaysNotUsedOfUser = array_values(
+                        $workdaysNotUsedOfUser
+                    );
+                }
+
+                $entry->setWorkday(
+                    $workday
+                );
 
                 $manager->persist($entry);
             }
@@ -150,11 +182,15 @@ class AppFixtures extends Fixture
      */
     private function getRandomString(int $length = 10): string
     {
-        $characters = ' .,0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters =
+            ' .,0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; ++$i) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[rand(
+                0,
+                $charactersLength - 1
+            )];
         }
 
         return $randomString;
