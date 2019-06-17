@@ -5,13 +5,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\LoginFormAuthenticator;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
-class RegistrationController extends AbstractController
+class RegistrationController extends BaseController
 {
     public function register(
         Request $request,
@@ -20,7 +19,10 @@ class RegistrationController extends AbstractController
         LoginFormAuthenticator $authenticator
     ): Response {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(
+            RegistrationFormType::class,
+            $user
+        );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -50,6 +52,8 @@ class RegistrationController extends AbstractController
             'registration/register.html.twig',
             [
                 'registrationForm' => $form->createView(),
+                'messages'         => $this->popMessagesFromSession(
+                ),
             ]
         );
     }

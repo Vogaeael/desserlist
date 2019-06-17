@@ -5,12 +5,10 @@ namespace App\Controller;
 use App\Entity\Entry;
 use App\Entity\Workday;
 use App\Form\EntryType;
-use App\Repository\WorkdayRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class EntryController extends AbstractController
+class EntryController extends BaseController
 {
     public function index()
     {
@@ -30,12 +28,16 @@ class EntryController extends AbstractController
         if ($this->isCurrentUser($userId)) {
             return $this->render(
                 'entry/view.html.twig',
-                ['entry' => $entry,]
+                [
+                    'entry'    => $entry,
+                    'messages' => $this->popMessagesFromSession(
+                    ),
+                ]
             );
         }
 
-        // @TODO add message to session
         $message = $this->getNotFoundMessage(Entry::class, $id);
+        $this->addMessageToSession($message);
 
         return $this->redirectToRoute('entry_show_all');
     }
@@ -55,13 +57,16 @@ class EntryController extends AbstractController
 
         $addEntry = !$this->registeredInAllWorkdays($userId);
 
-        return $this->render(
+        $view = $this->render(
             'entry/viewAllByUser.html.twig',
             [
                 'entries'  => $entries,
                 'addEntry' => $addEntry,
+                'messages' => $this->popMessagesFromSession(),
             ]
         );
+
+        return $view;
     }
 
     public function createEntry(Request $request)
@@ -87,6 +92,7 @@ class EntryController extends AbstractController
             'entry/create.html.twig',
             [
                 'entryForm' => $form->createView(),
+                'messages'  => $this->popMessagesFromSession(),
             ]
         );
     }
@@ -114,12 +120,14 @@ class EntryController extends AbstractController
                 'entry/edit.html.twig',
                 [
                     'entryForm' => $form->createView(),
+                    'messages'  => $this->popMessagesFromSession(
+                    ),
                 ]
             );
         }
 
-        // @TODO add message to session
         $message = $this->getNotFoundMessage(Entry::class, $id);
+        $this->addMessageToSession($message);
 
         return $this->redirectToRoute('entry_show_all');
     }
@@ -133,8 +141,6 @@ class EntryController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($entry);
             $entityManager->flush();
-
-            return $this->redirectToRoute('entry_show_all');
         }
 
         return $this->redirectToRoute('entry_show_all');
@@ -152,43 +158,13 @@ class EntryController extends AbstractController
             ->find($id);
 
         if (!$entry) {
+            // @TODO catch it somewhere
             throw $this->createNotFoundException(
                 'No entry found for id ' . $id
             );
         }
 
         return $entry;
-    }
-
-    /**
-     * Check if the id is of the current user
-     *
-     * @param $userId
-     *
-     * @return bool
-     */
-    private function isCurrentUser($userId)
-    {
-        $currentUserId = $this->getUser()->getId();
-
-        return $currentUserId === $userId;
-    }
-
-    /**
-     * @param string $className
-     * @param        $id
-     *
-     * @return string
-     */
-    private function getNotFoundMessage(
-        string $className,
-        $id
-    ): string {
-        return sprintf(
-            '%s with id: %s not found',
-            $className,
-            $id
-        );
     }
 
     /**
@@ -239,7 +215,8 @@ class EntryController extends AbstractController
      *
      * @return bool
      */
-    private function registeredInAllWorkdays($userId) {
+    private function registeredInAllWorkdays($userId)
+    {
         $notRegisteredWorkdays = $this->getDoctrine()
             ->getRepository(Workday::class)
             ->findUnregisteredWorkdays($userId);

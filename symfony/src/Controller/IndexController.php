@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-class IndexController extends AbstractController
+class IndexController extends BaseController
 {
     public function index()
     {
@@ -14,7 +12,9 @@ class IndexController extends AbstractController
             'base/index.html.twig',
             [
                 'controller_name' => 'BaseController',
-                'user' => $user,
+                'user'            => $user,
+                'messages'        => $this->popMessagesFromSession(
+                ),
             ]
         );
     }

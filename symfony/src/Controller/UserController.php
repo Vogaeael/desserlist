@@ -3,11 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 
-class UserController extends AbstractController
+class UserController extends BaseController
 {
     public function index()
     {
@@ -22,13 +19,15 @@ class UserController extends AbstractController
             return $this->render(
                 'user/view.html.twig',
                 [
-                    'user' => $user,
+                    'user'     => $user,
+                    'messages' => $this->popMessagesFromSession(
+                    ),
                 ]
             );
         }
 
-        // @TODO add message to session
         $message = $this->getNotFoundMessage(User::class, $id);
+        $this->addMessageToSession($message);
 
         return $this->redirectToRoute('home');
     }
@@ -65,45 +64,45 @@ class UserController extends AbstractController
     //        return $this->redirectToRoute('home');
     //    }
 
-//    public function editUser($id, Request $request)
-//    {
-//        if ($this->isCurrentUser($id)) {
-//            $user = $this->getUserById($id);
-//
-//            return $this->handleForm($user, $request);
-//        }
-//
-//        // @TODO add message to session
-//        $message = $this->getNotFoundMessage(User::class, $id);
-//
-//        return $this->redirectToRoute('home');
-//    }
+    //    public function editUser($id, Request $request)
+    //    {
+    //        if ($this->isCurrentUser($id)) {
+    //            $user = $this->getUserById($id);
+    //
+    //            return $this->handleForm($user, $request);
+    //        }
+    //
+    //        // @TODO add message to session
+    //        $message = $this->getNotFoundMessage(User::class, $id);
+    //
+    //        return $this->redirectToRoute('home');
+    //    }
 
-//    private function handleForm(User $user, Request $request)
-//    {
-//        $form = $this->createForm(UserType::class, $user);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $user = $form->getData();
-//
-//            $entityManager = $this->getDoctrine()->getManager();
-//            $entityManager->persist($user);
-//            $entityManager->flush();
-//
-//            return $this->redirectToRoute(
-//                'user_show',
-//                ['id' => $user->getId()]
-//            );
-//        }
-//
-//        return $this->render(
-//            'user/edit.html.twig',
-//            [
-//                'form' => $form->createView(),
-//            ]
-//        );
-//    }
+    //    private function handleForm(User $user, Request $request)
+    //    {
+    //        $form = $this->createForm(UserType::class, $user);
+    //        $form->handleRequest($request);
+    //
+    //        if ($form->isSubmitted() && $form->isValid()) {
+    //            $user = $form->getData();
+    //
+    //            $entityManager = $this->getDoctrine()->getManager();
+    //            $entityManager->persist($user);
+    //            $entityManager->flush();
+    //
+    //            return $this->redirectToRoute(
+    //                'user_show',
+    //                ['id' => $user->getId()]
+    //            );
+    //        }
+    //
+    //        return $this->render(
+    //            'user/edit.html.twig',
+    //            [
+    //                'form' => $form->createView(),
+    //            ]
+    //        );
+    //    }
 
     private function getUserById($id)
     {
@@ -118,36 +117,5 @@ class UserController extends AbstractController
         }
 
         return $user;
-    }
-
-    /**
-     * Check if the id is of the current user
-     *
-     * @param $userId
-     *
-     * @return bool
-     */
-    private function isCurrentUser($userId)
-    {
-        $currentUserId = (int)$this->getUser()->getId();
-
-        return $currentUserId === (int)$userId;
-    }
-
-    /**
-     * @param string $className
-     * @param        $id
-     *
-     * @return string
-     */
-    private function getNotFoundMessage(
-        string $className,
-        $id
-    ): string {
-        return sprintf(
-            '%s with id: %s not found',
-            $className,
-            $id
-        );
     }
 }

@@ -16,19 +16,24 @@
     <h1>Navigation</h1>
     <ul>
         <li><a href="{{ path('home') }}">Home</a></li>
-{#        <li><a href="{{ path('user_show_all') }}">Users</a></li>#}
+        {#        <li><a href="{{ path('user_show_all') }}">Users</a></li>#}
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <li><a href="{{ path('entry_show_all') }}">Your Entries</a></li>
+            <li><a href="{{ path('entry_show_all') }}">Your
+                    Entries</a></li>
             <li><a href="/logout">Logout</a></li>
         {% else %}
             <li><a href="{{ path('app_login') }}">Login</a></li>
-            <li><a href="{{ path('app_register') }}">Register</a></li>
+            <li>
+                <a href="{{ path('app_register') }}">Register</a>
+            </li>
         {% endif %}
     </ul>
 </nav>
 <div class="wrapper">
-    {% if message is defined %}
-        <div class="message">{{ message }}</div>
+    {% if messages is defined %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
     {% endif %}
     {% block body %}{% endblock %}
 </div>
