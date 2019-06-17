@@ -14,6 +14,6 @@ user_show:
 #  path: /user/delete/{id}
 #  controller: App\Controller\UserController::deleteUser
 
-user_edit:
-  path: /user/edit/{id}
-  controller: App\Controller\UserController::editUser
+#user_edit:
+#  path: /user/edit/{id}
+#  controller: App\Controller\UserController::editUser

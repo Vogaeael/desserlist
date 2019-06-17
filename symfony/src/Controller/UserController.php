@@ -65,45 +65,45 @@ class UserController extends AbstractController
     //        return $this->redirectToRoute('home');
     //    }
 
-    public function editUser($id, Request $request)
-    {
-        if ($this->isCurrentUser($id)) {
-            $user = $this->getUserById($id);
+//    public function editUser($id, Request $request)
+//    {
+//        if ($this->isCurrentUser($id)) {
+//            $user = $this->getUserById($id);
+//
+//            return $this->handleForm($user, $request);
+//        }
+//
+//        // @TODO add message to session
+//        $message = $this->getNotFoundMessage(User::class, $id);
+//
+//        return $this->redirectToRoute('home');
+//    }
 
-            return $this->handleForm($user, $request);
-        }
-
-        // @TODO add message to session
-        $message = $this->getNotFoundMessage(User::class, $id);
-
-        return $this->redirectToRoute('home');
-    }
-
-    private function handleForm(User $user, Request $request)
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute(
-                'user_show',
-                ['id' => $user->getId()]
-            );
-        }
-
-        return $this->render(
-            'user/edit.html.twig',
-            [
-                'form' => $form->createView(),
-            ]
-        );
-    }
+//    private function handleForm(User $user, Request $request)
+//    {
+//        $form = $this->createForm(UserType::class, $user);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $user = $form->getData();
+//
+//            $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager->persist($user);
+//            $entityManager->flush();
+//
+//            return $this->redirectToRoute(
+//                'user_show',
+//                ['id' => $user->getId()]
+//            );
+//        }
+//
+//        return $this->render(
+//            'user/edit.html.twig',
+//            [
+//                'form' => $form->createView(),
+//            ]
+//        );
+//    }
 
     private function getUserById($id)
     {

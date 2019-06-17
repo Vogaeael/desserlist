@@ -24,7 +24,6 @@
                 <li>Email: {{ user.email }}</li>
                 <li>Name: {{ user.name }}</li>
                 <li>Roles: {% for role in user.roles %}{{ role }}, {% endfor %}</li>
-                <li><a href="{{ path('user_edit', {'id': user.id }) }}">Edit</a></li>
             </ul>
         {% else %}
         <h1>Hello {{ controller_name }}! ✅</h1>
