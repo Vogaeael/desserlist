@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface
@@ -11,7 +12,12 @@ class User implements UserInterface
     private $roles = [];
     private $password;
     private $name;
-    private $entries = [];
+    private $entries;
+
+    public function __construct()
+    {
+        $this->entries = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
