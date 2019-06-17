@@ -20,14 +20,15 @@ class WorkdayRepository extends ServiceEntityRepository
             ->findRegisteredWorkdayIds($userId);
 
         $qb = $this->createQueryBuilder('w');
+        $qb->select('w');
 
-        $notInExpression = $qb->expr()
-            ->notIn('w.id', $registeredWorkdayIds);
+        if ([] !== $registeredWorkdayIds) {
+            $notInExpression = $qb->expr()
+                ->notIn('w.id', $registeredWorkdayIds);
+            $qb->where($notInExpression);
+        }
 
-        return $qb->select('w')
-            ->where($notInExpression)
-            ->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
