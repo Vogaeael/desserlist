@@ -1,3 +1,7 @@
 app_directory:
   resource: 'routes/'
   type: directory
+
+app_logout:
+  path: /logout
+  methods: GET
