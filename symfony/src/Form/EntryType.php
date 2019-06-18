@@ -43,7 +43,10 @@ class EntryType extends AbstractType
         $builder->add(
             'note',
             TextType::class,
-            ['required' => false]
+            [
+                'attr'     => ['placeholder' => 'Note'],
+                'required' => false,
+            ]
         )
             ->add('save', SubmitType::class);
     }
