@@ -1,66 +1,13 @@
-table, th, tr, td {
-  border: 1px solid black
-}
-//.wrapper {
-//  max-width: 1200px;
-//  margin: 0 auto;
-//}
-//
-//.table-list {
-//  list-style-type: none;
-//  width: 100%;
-//  display: flex;
-//  flex-wrap: wrap;
-//  padding: 0;
-//
-//  * {
-//    box-sizing: border-box;
-//  }
-//
-//  > li {
-//    flex: 0 0 20%;
-//    border: 1px solid grey;
-//    padding: 1em;
-//    display: flex;
-//    align-items: flex-end;
-//    justify-content : space-around;
-//  }
-//}
-//
-//form {
-//  > div {
-//    display: flex;
-//    margin: 5px 0;
-//
-//    > ul {
-//      order: 3;
-//      color: red;
-//      margin: 0;
-//      padding-inline-start: 40px;
-//    }
-//  }
-//
-//  label {
-//    width: 120px;
-//    line-height: 30px;
-//  }
-//
-//  input {
-//    width: 175px;
-//    height: 30px;
-//  }
-//}
-//
-//button {
-//  height: 35px;
-//  padding: 5px 15px;
-//  font-size: 16px;
-//  background-color: white;
-//  border: 1px solid black;
-//  cursor: pointer;
-//
-//  &:hover {
-//    background-color: darkblue;
-//    color: white;
-//  }
-//}
+/** variables **/
+@import 'colors';
+
+/** base styles **/
+@import 'buttons';
+@import 'form';
+@import 'message';
+@import 'navigation';
+@import 'table';
+
+/** site styles **/
+@import 'entry/index';
+@import 'security/login';

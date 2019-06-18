@@ -6,7 +6,7 @@
     <div class="example-wrapper">
         <h1>Entries</h1>
         {% if entries|length > 0 %}
-            <table>
+            <table class="entries-table">
                 <tr>
                     <th>Date</th>
                     <th>Meal</th>
@@ -15,19 +15,22 @@
                 </tr>
                 {% for entry in entries %}
                     <tr>
-                        <td>{{ entry.workday.date|date('Y-m-d') }}</td>
+                        <td class="td-center">{{ entry.workday.date|date('Y-m-d') }}</td>
                         <td>{{ entry.workday.meal.name }}</td>
-                        <td>{{ entry.note }}</td>
-                        <td>
-                            <ul>
+                        <td class="td-center">{{ entry.note }}</td>
+                        <td class="td-center">
+                            <ul class="actions">
                                 <li>
-                                    <a href="{{ path('entry_show', {'id': entry.id }) }}">View</a>
+                                    <a class="button-link"
+                                       href="{{ path('entry_show', {'id': entry.id }) }}">View</a>
                                 </li>
                                 <li>
-                                    <a href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a>
+                                    <a class="button-link"
+                                       href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a>
                                 </li>
                                 <li>
-                                    <a href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a>
+                                    <a class="button-link"
+                                       href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a>
                                 </li>
                             </ul>
                         </td>
@@ -36,7 +39,10 @@
             </table>
         {% endif %}
         {% if addEntry %}
-            <span><a href="{{ path('entry_create') }}">Create an Entry</a></span>
+            <span class="add-button">
+                <a class="button-link"
+                   href="{{ path('entry_create') }}">Create an Entry</a>
+            </span>
         {% endif %}
     </div>
 {% endblock %}

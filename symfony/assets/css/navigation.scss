@@ -1,0 +1,17 @@
+.nav {
+  ul {
+    display: flex;
+    padding: 10px;
+    justify-content: flex-start;
+
+    li {
+      list-style-type: none;
+      margin-right: 5px;
+
+      a {
+        font-size: 2em;
+        padding: 10px;
+      }
+    }
+  }
+}

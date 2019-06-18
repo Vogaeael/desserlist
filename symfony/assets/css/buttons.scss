@@ -1,0 +1,11 @@
+.button-link, button {
+  background-color: $color-raw-umber;
+  padding: 10px;
+  text-decoration: none;
+  color: $color-black;
+
+  &:hover {
+    background-color: $color-light-raw-umber;
+    color: $color-dark-grey;
+  }
+}

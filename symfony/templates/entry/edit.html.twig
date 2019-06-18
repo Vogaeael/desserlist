@@ -6,9 +6,11 @@
     <h1>Edit Entry</h1>
 
     {{ form_start(entryForm) }}
-    {% if entryForm.workday is defined %}
-        {{ form_row(entryForm.workday) }}
-    {% endif %}
-    {{ form_row(entryForm.note) }}
+    <div class="input-fields">
+        {% if entryForm.workday is defined %}
+            {{ form_row(entryForm.workday) }}
+        {% endif %}
+        {{ form_row(entryForm.note) }}
+    </div>
     {{ form_end(entryForm) }}
 {% endblock %}

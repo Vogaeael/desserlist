@@ -1,0 +1,57 @@
+form {
+  width: 500px;
+  padding: 15px;
+  background-color: $color-dark-white;
+
+  .input-fields {
+    display: flex;
+    flex-wrap: wrap;
+
+    div {
+      margin: 5px;
+      width: 45%;
+
+      label {
+        display: block;
+        color: $color-dark-grey;
+      }
+
+      input {
+        width: 100%;
+      }
+
+      select {
+        width: 100%;
+      }
+
+      ul {
+        margin: 2px;
+        padding: 2px;
+
+        li {
+          color: $color-alert-danger;
+          list-style-type: none;
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    margin: 20px 5px 5px;
+  }
+}
+
+.alert-wrapper {
+  display: flex;
+
+  .alert {
+    padding: 5px;
+    margin: 5px;
+    background-color: $color-alert;
+
+    &.alert-danger {
+      background-color: $color-alert-danger;
+    }
+  }
+}

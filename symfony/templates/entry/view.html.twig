@@ -5,7 +5,7 @@
 {% block body %}
     <div class="example-wrapper">
         <h1>Entry</h1>
-        <table>
+        <table class="entry-table">
             <tr>
                 <th>Date</th>
                 <td>{{ entry.workday.date|date('Y-m-d') }}</td>
@@ -21,9 +21,15 @@
             <tr>
                 <th>Actions</th>
                 <td>
-                    <ul>
-                        <li><a href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a></li>
-                        <li><a href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a></li>
+                    <ul class="actions">
+                        <li>
+                            <a class="button-link"
+                               href="{{ path('entry_delete', {'id': entry.id }) }}">Delete</a>
+                        </li>
+                        <li>
+                            <a class="button-link"
+                               href="{{ path('entry_edit', {'id': entry.id }) }}">Edit</a>
+                        </li>
                     </ul>
                 </td>
             </tr>
