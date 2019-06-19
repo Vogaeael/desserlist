@@ -26,12 +26,28 @@ Mit dem Befehl `docker-compose stop` pausiert man die Container.
 # Container löschen
 Mit dem Befehl `docker-compose down` fährt man die Container runter.
 
-## Datenbank erstellen und befüllen
-# Container betretten
+## Container betretten
+# PHP-Container betretten
 Mit dem Befehl `docker-compose exec dsrt-php bash` kommt man auf den Container für php.
+Fast alle Befehle sollte man dort im Verzeichniss `var/www/html` ausführen.
 
-# In den richtigen Ordner
-Man sollte in das Verzeichniss `var/www/html`gehen.
+## Framework und Bundle installieren
+# In den richtigen Ordner gehen
+Man sollte auf den PHP Container gehen und dort in das Verzeichniss `var/www/html` gehen.
+
+# Composer ausführen
+In dem Verzeichniss sollte man dann den Befehl `composer install` ausführen.
+
+## Yarn install ausführen
+# In den richtigen Ordner gehen
+Man sollte auf den PHP Container gehen und dort in das Verzeichniss `var/www/html` gehen.
+
+# Yarn install
+Dort sollte man den Befehl `yarn install` ausführen.
+
+## Datenbank erstellen und befüllen
+# In den richtigen Ordner gehen
+Man sollte auf den PHP Container gehen und dort in das Verzeichniss `var/www/html`gehen.
 
 # Datenbank aufbauen
 Mit dem Befehl `bin/console doctrine:database:create` erstellt man die Datenbank.
